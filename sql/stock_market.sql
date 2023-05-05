@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS stock_companies(
 	company_label VARCHAR(4) NOT NULL,
 	owner_id VARCHAR(100) NOT NULL,
 	total_shares INT NOT NULL,
+	UNIQUE (company_label),
 	PRIMARY KEY (id)
 );
 
@@ -31,3 +32,19 @@ CREATE TABLE IF NOT EXISTS stock_shares(
 	PRIMARY KEY (id),
 	FOREIGN KEY (company_id) REFERENCES stock_companies(id)
 );
+
+INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
+VALUES (1, 'Los Santos National Index', 'LSNI', 'Index', 200000);
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (20.000, 1, '1980-01-01 00:00:00.1');
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (22.000, 1, '1990-01-01 00:00:00.1');
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (18.000, 1, '2000-01-01 00:00:00.1');
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (23.000, 1, '2010-01-01 00:00:00.1');
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (28.000, 1, '2020-01-01 00:00:00.1');
+
+INSERT INTO stock_shares (owner_id, quantity, company_id)
+VALUES ('steam:2019302', 1000, 1);

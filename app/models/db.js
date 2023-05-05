@@ -16,15 +16,25 @@ connection.connect(error => {
 });
 
 const User = {
-    async getProductById(id) {
+    async getCompanyData(label) {
         const [rows, fields] = await connection.promise().query(
-        `SELECT * FROM products WHERE id = ?`, 
-        [id]
+        `SELECT * FROM stock_companies WHERE company_label = ?`, 
+        [label]
         );
         if (rows.length) {
             return rows[0];
         }
-        return new Error('Product with id: ' + id + ' -> Not found');
+        throw new Error('Company with label: ' + label + ' -> Not found');
+    },
+    async getCompanyHistory(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 40;`, 
+        [id]
+        );
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('History of company with id: ' + id + ' -> Not found');
     },
 };
   
