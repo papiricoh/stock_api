@@ -16,6 +16,14 @@ connection.connect(error => {
 });
 
 const User = {
+    async getAllCompaniesLabels() {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT company_label FROM stock_companies`);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('No Companies in the database');
+    },
     async getCompanyData(label) {
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_companies WHERE company_label = ?`, 
@@ -33,6 +41,16 @@ const User = {
         );
         if (rows.length) {
             return rows;
+        }
+        throw new Error('History of company with id: ' + id + ' -> Not found');
+    },
+    async getActualPrice(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT price FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 1;`, 
+        [id]
+        );
+        if (rows.length) {
+            return rows[0].price;
         }
         throw new Error('History of company with id: ' + id + ' -> Not found');
     },

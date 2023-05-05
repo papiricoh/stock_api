@@ -18,3 +18,23 @@ exports.getCompanyData = async (req, res) => {
     }
   }
 };
+exports.getCompaniesList = async (req, res) => {
+  try {
+    const companiesIDs = await User.getAllCompaniesLabels();
+    const result = [];
+    for (let index = 0; index < companiesIDs.length; index++) {
+      let company = {};
+      company = await User.getCompanyData(companiesIDs[index].company_label);
+      company.actual_price = await User.getActualPrice(company.id);
+      company.market_cap = company.total_shares * company.actual_price;
+      result[result.length] = company;
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
