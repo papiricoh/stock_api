@@ -29,7 +29,7 @@ exports.getCompaniesList = async (req, res) => {
       company.market_cap = company.total_shares * company.actual_price;
       result[result.length] = company;
     }
-    res.status(200).json(result);
+    res.status(200).json(result.reverse());
   } catch (err) {
     if (err.message.includes("Not found")) {
       res.status(404).json({ error: err.message });
