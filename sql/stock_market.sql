@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS stock_shares(
 	quantity INT NOT NULL,
 	company_id INT NOT NULL,
 	PRIMARY KEY (id),
+	UNIQUE (owner_id),
 	FOREIGN KEY (company_id) REFERENCES stock_companies(id)
 );
 
@@ -48,3 +49,5 @@ VALUES (28.000, 1, '2020-01-01 00:00:00.1');
 
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2019302', 1000, 1);
+INSERT INTO stock_shares (owner_id, quantity, company_id)
+VALUES ('steam:2024302', 3000, 1);

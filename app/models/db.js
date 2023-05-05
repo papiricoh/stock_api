@@ -36,6 +36,16 @@ const User = {
         }
         throw new Error('History of company with id: ' + id + ' -> Not found');
     },
+    async getCompanyTotalOwnedShares(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT SUM(quantity) AS totalOwnedShares FROM stock_shares WHERE company_id = ?`, 
+        [id]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Shares of company with id: ' + id + ' -> Not found');
+    },
 };
   
 module.exports = User;
