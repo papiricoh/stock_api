@@ -4,5 +4,6 @@ const userController = require('../controllers/userController');
 
 router.get('/company/:label', userController.getCompanyData);
 router.get('/companies', userController.getCompaniesList);
+router.post('/newcompany', userController.postCreateCompany);
 
 module.exports = router;

@@ -64,6 +64,26 @@ const User = {
         }
         throw new Error('Shares of company with id: ' + id + ' -> Not found');
     },
+    async checkCompanyLabelAvariability(label) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_companies WHERE company_label = ?`, 
+        [label]
+        );
+        if (rows.length == 0) {
+            return true;
+        }
+        throw new Error('Company with label: ' + label + ' -> Already Exists');
+    },
+    async checkCompanyOwnerAvariability(owner) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_companies WHERE owner_id = ?`, 
+        [owner]
+        );
+        if (rows.length == 0) {
+            return true;
+        }
+        throw new Error('Company with owner: ' + owner + ' -> Already Exists');
+    },
 };
   
 module.exports = User;

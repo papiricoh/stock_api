@@ -2,6 +2,7 @@ USE es_extended;
 
 DROP TABLE IF EXISTS stock_history;
 DROP TABLE IF EXISTS stock_shares;
+DROP TABLE IF EXISTS stock_wallet;
 DROP TABLE IF EXISTS stock_companies;
 
 CREATE TABLE IF NOT EXISTS stock_companies(
@@ -9,6 +10,7 @@ CREATE TABLE IF NOT EXISTS stock_companies(
 	company_name VARCHAR(60) NOT NULL,
 	company_label VARCHAR(4) NOT NULL,
 	owner_id VARCHAR(100) NOT NULL,
+	money INT DEFAULT 0,
 	total_shares INT NOT NULL,
 	UNIQUE (company_label),
 	PRIMARY KEY (id)
@@ -31,6 +33,14 @@ CREATE TABLE IF NOT EXISTS stock_shares(
 	company_id INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (company_id) REFERENCES stock_companies(id)
+);
+
+CREATE TABLE IF NOT EXISTS stock_wallet(
+	id INT AUTO_INCREMENT,
+	owner_id VARCHAR(100) NOT NULL,
+	money INT DEFAULT '0',
+	PRIMARY KEY (id),
+	UNIQUE (owner_id)
 );
 
 INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
@@ -68,3 +78,10 @@ INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2019302', 1000, 2);
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2024302', 3000, 2);
+INSERT INTO stock_wallet (owner_id, money)
+VALUES ('steam:2024302', 32000);
+
+INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
+VALUES (3, 'Test', 'TEST', 'steam:2019302', 200000);
+INSERT INTO stock_history (price, company_id, movement_date)
+VALUES (20000, 3, '1980-01-01 00:00:00.1');
