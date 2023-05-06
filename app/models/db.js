@@ -84,6 +84,56 @@ const User = {
         }
         throw new Error('Company with owner: ' + owner + ' -> Already Exists');
     },
+    async getPlayerMoney(player) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_wallet WHERE owner_id = ?`, 
+        [player]
+        );
+        if (rows.length) {
+            return rows[0].money;
+        }
+        throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
+    },
+    async updateMoney(user_id, money) {
+        const [rows, fields] = await connection.promise().query(
+        `UPDATE stock_wallet SET money = ? WHERE owner_id = ?`, 
+        [money, user_id]
+        );
+        if (rows.info) {
+            return rows;
+        }
+        throw new Error('Wallet with owner: ' + user_id + ' -> Not Exists');
+    },
+    async insertNewCompany(company) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_companies (company_name, company_label, owner_id, money, total_shares) VALUES (?, ?, ?, ?, ?)`, 
+        [company.name, company.label, company.owner_id, company.company_money, company.total_shares]
+        );
+        if (rows.insertId) {
+            return company.label;
+        }
+        throw new Error('Company with label: ' + company.label + ' -> Allready Exists');
+    },
+    async insertInitialHistory(id, current_price) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
+        [current_price, id]
+        );
+        if (rows.insertId) {
+            return current_price;
+        }
+        throw new Error('Unable to Insert History');
+    },
+    async insertInitialOwnerStockShares(id, owner_id, owner_shares) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_shares (owner_id, quantity, company_id) VALUES (?, ?, ?)`, 
+        [owner_id, owner_shares, id]
+        );
+        if (rows.insertId) {
+            return owner_shares;
+        }
+        throw new Error('Unable to Insert Shares');
+    },
 };
   
 module.exports = User;

@@ -50,13 +50,26 @@ exports.postCreateCompany = async (req, res) => {
       checkOwner = null;
     }
     //CHECK OWNER MONEY AVARIABILITY 
-    if(await User.checkCompanyLabelAvariability(body.label) && await User.checkCompanyOwnerAvariability(checkOwner)) {
-      let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
-      let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
-      let company_price = Number((sold_money / sold_shares).toFixed(2)); 
-      const company = { name: body.name, label: body.label, owner_id: body.owner_id, company_money: body.initial_money - sold_money, total_shares: Number(body.total_shares), owner_shares: body.total_shares - sold_shares, current_price: company_price}
-      //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
-      res.status(200).json(company);
+    let avariable_money = await User.getPlayerMoney(body.owner_id);
+    if(avariable_money >= body.initial_money) {
+      if(await User.checkCompanyLabelAvariability(body.label) && await User.checkCompanyOwnerAvariability(checkOwner)) {
+        let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
+        let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
+        let company_price = Number((sold_money / sold_shares).toFixed(2)); 
+        const company = { name: body.name, label: body.label, owner_id: body.owner_id, company_money: body.initial_money - sold_money, total_shares: Number(body.total_shares), owner_shares: body.total_shares - sold_shares, current_price: company_price}
+        //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
+        const new_company_label = await User.insertNewCompany(company);
+        const new_company = await User.getCompanyData(new_company_label);
+        await User.insertInitialHistory(new_company.id, company.current_price);
+        await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
+        //REMOVE PLAYER MONEY
+        await User.updateMoney(body.owner_id, avariable_money - body.initial_money);
+        res.status(200).json(company);
+      }else {
+        res.status(500).json({ error: "Player Error: " + "already owner of company or label repeated" });
+      }
+    }else {
+      res.status(500).json({ error: "Player Error: " + "Not enought money in the stock wallet" }); 
     }
   } catch (err) {
     if (err.message.includes("Not found")) {
