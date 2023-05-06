@@ -49,9 +49,14 @@ exports.postCreateCompany = async (req, res) => {
     if(body.owner_id == 'Index' || body.owner_id == 'NPC') {
       checkOwner = null;
     }
+    //CHECK OWNER MONEY AVARIABILITY 
     if(await User.checkCompanyLabelAvariability(body.label) && await User.checkCompanyOwnerAvariability(checkOwner)) {
-      let company_price = null; //TODO MAKE A FORMULA TO RELACCIONATE INITIALMONEY TOTAL SHARES AND PERCENTAGE SOLD
-      res.status(200).json(body);
+      let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
+      let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
+      let company_price = Number((sold_money / sold_shares).toFixed(2)); 
+      const company = { name: body.name, label: body.label, owner_id: body.owner_id, company_money: body.initial_money - sold_money, total_shares: Number(body.total_shares), owner_shares: body.total_shares - sold_shares, current_price: company_price}
+      //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
+      res.status(200).json(company);
     }
   } catch (err) {
     if (err.message.includes("Not found")) {
