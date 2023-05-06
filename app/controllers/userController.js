@@ -21,6 +21,7 @@ exports.getCompanyData = async (req, res) => {
     }
   }
 };
+
 exports.getCompaniesList = async (req, res) => {
   try {
     const companiesIDs = await User.getAllCompaniesLabels();
@@ -46,12 +47,14 @@ exports.postCreateCompany = async (req, res) => {
   try {
     const body = req.body; //name, label, owner_id, total_shares, initial_money, percentage_sold
     let checkOwner = body.owner_id;
+    let avariable_money = 0;
     if(body.owner_id == 'Index' || body.owner_id == 'NPC') {
       checkOwner = null;
+    }else {
+      avariable_money = await User.getPlayerMoney(body.owner_id);
     }
     //CHECK OWNER MONEY AVARIABILITY 
-    let avariable_money = await User.getPlayerMoney(body.owner_id);
-    if(avariable_money >= body.initial_money) {
+    if(avariable_money >= body.initial_money || body.owner_id == 'Index' || body.owner_id == 'NPC') {
       if(await User.checkCompanyLabelAvariability(body.label) && await User.checkCompanyOwnerAvariability(checkOwner)) {
         let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
         let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
@@ -62,9 +65,11 @@ exports.postCreateCompany = async (req, res) => {
         const new_company = await User.getCompanyData(new_company_label);
         await User.insertInitialHistory(new_company.id, company.current_price);
         await User.insertInitialHistory(new_company.id, company.current_price);
-        await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
-        //REMOVE PLAYER MONEY
-        await User.updateMoney(body.owner_id, avariable_money - body.initial_money);
+        if(checkOwner != null) {
+          await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
+          //REMOVE PLAYER MONEY
+          await User.updateMoney(body.owner_id, avariable_money - body.initial_money);
+        }
         res.status(200).json(company);
       }else {
         res.status(500).json({ error: "Player Error: " + "already owner of company or label repeated" });
@@ -80,3 +85,4 @@ exports.postCreateCompany = async (req, res) => {
     }
   }
 };
+
