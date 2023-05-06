@@ -72,11 +72,54 @@ exports.postCreateCompany = async (req, res) => {
         }
         res.status(200).json(company);
       }else {
-        res.status(500).json({ error: "Player Error: " + "already owner of company or label repeated" });
+        throw new Error("already owner of company or label repeated");
       }
     }else {
-      res.status(500).json({ error: "Player Error: " + "Not enought money in the stock wallet" }); 
+      throw new Error("Not enought money in the stock wallet"); 
     }
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
+exports.postBuyShares = async (req, res) => {
+  try {
+    const body = req.body; //company_label, player_id, quantity,
+    const player_money = await User.getPlayerMoney(body.player_id);
+    const company = await User.getCompanyData(body.company_label);
+    company.actual_price = await User.getActualPrice(company.id);
+    const total_owned_shares = await User.getCompanyTotalOwnedShares(company.id);
+    if(company.total_shares < body.quantity + total_owned_shares.totalOwnedShares) { //check total shares avariability
+      throw new Error("Not enought shares in the company to buy " + body.quantity + " shares."); 
+    }
+    if(player_money < company.actual_price * body.quantity) {
+      throw new Error("Not enought money in the stock wallet to buy " + body.quantity + " shares."); 
+    }
+    let currentShares = 0;
+    try {
+      currentShares = await User.getSharesFromId(body.player_id, company.id);
+      currentShares = currentShares.quantity;
+    } catch (err_shares) {
+      if (err_shares.message.includes("Shares of company")) {
+        currentShares = 0;
+        await User.insertEmptyShares(body.player_id, company.id);
+      }else {
+        throw err_shares;
+      }
+    }
+
+    //BUY SHARES
+    await User.updateShares(body.player_id, company.id, Number(Number(currentShares) + Number(body.quantity)));
+    //REMOVE MONEY
+    await User.updateMoney(body.player_id, player_money - company.actual_price * body.quantity);
+
+    //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
+
+    res.status(200).json(company);
   } catch (err) {
     if (err.message.includes("Not found")) {
       res.status(404).json({ error: err.message });

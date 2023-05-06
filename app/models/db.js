@@ -94,6 +94,16 @@ const User = {
         }
         throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
     },
+    async getSharesFromId(id, company_id) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_shares WHERE owner_id = ? AND company_id = ?`, 
+        [id, company_id]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Shares of company id: ' + company_id + 'with owner: ' + id + ' -> Not Exists');
+    },
     async updateMoney(user_id, money) {
         const [rows, fields] = await connection.promise().query(
         `UPDATE stock_wallet SET money = ? WHERE owner_id = ?`, 
@@ -131,6 +141,26 @@ const User = {
         );
         if (rows.insertId) {
             return owner_shares;
+        }
+        throw new Error('Unable to Insert Shares');
+    },
+    async insertEmptyShares(player_id, company_id) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_shares (owner_id, quantity, company_id) VALUES (?, 0, ?)`, 
+        [player_id, company_id]
+        );
+        if (rows.insertId) {
+            return player_id;
+        }
+        throw new Error('Unable to Insert Shares');
+    },
+    async updateShares(player_id, company_id, quantity) {
+        const [rows, fields] = await connection.promise().query(
+        `UPDATE stock_shares SET quantity = ? WHERE owner_id = ? AND company_id = ?`, 
+        [quantity, player_id, company_id]
+        );
+        if (rows.info) {
+            return rows;
         }
         throw new Error('Unable to Insert Shares');
     },
