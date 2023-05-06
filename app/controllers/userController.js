@@ -61,6 +61,7 @@ exports.postCreateCompany = async (req, res) => {
         const new_company_label = await User.insertNewCompany(company);
         const new_company = await User.getCompanyData(new_company_label);
         await User.insertInitialHistory(new_company.id, company.current_price);
+        await User.insertInitialHistory(new_company.id, company.current_price);
         await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
         //REMOVE PLAYER MONEY
         await User.updateMoney(body.owner_id, avariable_money - body.initial_money);
