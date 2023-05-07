@@ -104,6 +104,16 @@ const User = {
         }
         throw new Error('Shares of company id: ' + company_id + 'with owner: ' + id + ' -> Not Exists');
     },
+    async getCheckUser(id) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_wallet WHERE owner_id = ?`, 
+        [id]
+        );
+        if (rows.length) {
+            return id;
+        }
+        throw new Error('User with id: ' + id + ' -> Dont have a stock wallet');
+    },
     async updateMoney(user_id, money) {
         const [rows, fields] = await connection.promise().query(
         `UPDATE stock_wallet SET money = ? WHERE owner_id = ?`, 
@@ -123,6 +133,16 @@ const User = {
             return company.label;
         }
         throw new Error('Company with label: ' + company.label + ' -> Allready Exists');
+    },
+    async insertNewWallet(id) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_wallet (owner_id, money) VALUES (?, ?)`, 
+        [id, 0]
+        );
+        if (rows.insertId) {
+            return id;
+        }
+        throw new Error('Failed to insert wallet');
     },
     async insertInitialHistory(id, current_price) {
         const [rows, fields] = await connection.promise().query(

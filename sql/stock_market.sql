@@ -79,7 +79,7 @@ VALUES ('steam:2019302', 1000, 2);
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2024302', 3000, 2);
 INSERT INTO stock_wallet (owner_id, money)
-VALUES ('steam:2024302', 320000);
+VALUES ('steam:2024302', 3200000);
 INSERT INTO stock_wallet (owner_id, money)
 VALUES ('steam:202430', 320000);
 

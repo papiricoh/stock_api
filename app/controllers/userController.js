@@ -22,6 +22,31 @@ exports.getCompanyData = async (req, res) => {
   }
 };
 
+exports.getCheckUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let message = "";
+    try {
+      await User.getCheckUser(id);
+      message = "User logged in";
+    } catch (error_user_notFound) {
+      if (error_user_notFound.message.includes("Dont have a stock wallet")) {
+        await User.insertNewWallet(id);
+        message = "User Wallet Created";
+      } else {
+        throw error_user_notFound;
+      }
+    }
+    res.status(200).json(message);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
 exports.getCompaniesList = async (req, res) => {
   try {
     const companiesIDs = await User.getAllCompaniesLabels();
@@ -135,3 +160,37 @@ exports.postBuyShares = async (req, res) => {
   }
 };
 
+exports.postDepositMoney = async (req, res) => {
+  try {
+    const body = req.body; //player_id, deposit
+    const player_money = await User.getPlayerMoney(body.player_id);
+    await User.updateMoney(body.player_id, Number(player_money) + Number(body.deposit));
+
+    res.status(200).json(Number(player_money) + Number(body.deposit));
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
+exports.postWithdrawMoney = async (req, res) => {
+  try {
+    const body = req.body; //player_id, withdraw
+    const player_money = await User.getPlayerMoney(body.player_id);
+    if(Number(player_money) - Number(body.withdraw) < 0) {
+      throw new Error('Not enough money in the wallet to withdraw, wallet: ' + player_money + ' amount to withdraw: ' + body.withdraw );
+    }
+    await User.updateMoney(body.player_id, Number(player_money) - Number(body.withdraw));
+
+    res.status(200).json(Number(player_money) - Number(body.withdraw));
+  } catch (err) {
+    if (err.message.includes("Not enough")) {
+      res.status(404).json({ error: 'Player Error: ' + err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
