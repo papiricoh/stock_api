@@ -154,6 +154,16 @@ const User = {
         }
         throw new Error('Unable to Insert Shares');
     },
+    async insertNewHistory(company_id, new_price) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
+        [new_price, company_id]
+        );
+        if (rows.insertId) {
+            return rows;
+        }
+        throw new Error('Unable to Insert New History');
+    },
     async updateShares(player_id, company_id, quantity) {
         const [rows, fields] = await connection.promise().query(
         `UPDATE stock_shares SET quantity = ? WHERE owner_id = ? AND company_id = ?`, 

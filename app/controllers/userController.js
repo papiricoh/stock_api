@@ -59,7 +59,7 @@ exports.postCreateCompany = async (req, res) => {
         let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
         let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
         let company_price = Number((sold_money / sold_shares).toFixed(2)); 
-        const company = { name: body.name, label: body.label, owner_id: body.owner_id, company_money: body.initial_money - sold_money, total_shares: Number(body.total_shares), owner_shares: body.total_shares - sold_shares, current_price: company_price}
+        const company = { name: body.name, label: body.label, owner_id: body.owner_id, company_money: body.initial_money - sold_money, total_shares: Number(body.total_shares), owner_shares: body.total_shares - sold_shares, current_price: company_price};
         //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
         const new_company_label = await User.insertNewCompany(company);
         const new_company = await User.getCompanyData(new_company_label);
@@ -118,8 +118,14 @@ exports.postBuyShares = async (req, res) => {
     await User.updateMoney(body.player_id, player_money - company.actual_price * body.quantity);
 
     //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
+    let new_price = Number((company.actual_price + (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
+    let random = (Math.floor(Math.random() * 30) - 4) / 1000;
+    if(true) { //CREATE CONFIG RANDOM_PRICE_VARIATION = TRUE;
+      new_price = Number((new_price + (new_price * random)).toFixed(2));
+    }
+    await User.insertNewHistory(company.id, new_price);
 
-    res.status(200).json(company);
+    res.status(200).json(new_price);
   } catch (err) {
     if (err.message.includes("Not found")) {
       res.status(404).json({ error: err.message });
