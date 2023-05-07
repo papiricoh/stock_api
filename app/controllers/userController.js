@@ -1,5 +1,6 @@
 // Importar modelo de usuario
 const User = require('../models/db');
+const controlerConfig = require("../config/controlerConfig.js");
 
 exports.getCompanyData = async (req, res) => {
   try {
@@ -145,7 +146,7 @@ exports.postBuyShares = async (req, res) => {
     //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price + (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 4) / 1000;
-    if(true) { //CREATE CONFIG RANDOM_PRICE_VARIATION = TRUE;
+    if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
     await User.insertNewHistory(company.id, new_price);
@@ -173,15 +174,15 @@ exports.postSellShares = async (req, res) => {
       throw new Error("Not enought shares in the stock wallet to sell " + body.quantity + " shares."); 
     }
 
-    //BUY SHARES
+    //SELL SHARES
     await User.updateShares(body.player_id, company.id, Number(Number(currentShares.quantity) - Number(body.quantity)));
     //ADD MONEY
     await User.updateMoney(body.player_id, player_money + company.actual_price * body.quantity);
 
-    //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
+    //UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price - (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 26) / 1000;
-    if(true) { //CREATE CONFIG RANDOM_PRICE_VARIATION = TRUE;
+    if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
     await User.insertNewHistory(company.id, new_price);
