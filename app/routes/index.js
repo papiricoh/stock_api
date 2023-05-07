@@ -7,6 +7,7 @@ router.get('/company/:label', userController.getCompanyData);
 router.get('/companies', userController.getCompaniesList);
 router.post('/newcompany', userController.postCreateCompany); //name, label, owner_id, total_shares, initial_money, percentage_sold
 router.post('/shares/buy', userController.postBuyShares); //company_label, player_id, quantity,
+router.post('/shares/sell', userController.postSellShares); //company_label, player_id, quantity,
 router.post('/user/deposit', userController.postDepositMoney); //player_id, deposit
 router.post('/user/withdraw', userController.postWithdrawMoney); //player_id, withdraw
 

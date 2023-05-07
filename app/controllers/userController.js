@@ -160,6 +160,42 @@ exports.postBuyShares = async (req, res) => {
   }
 };
 
+exports.postSellShares = async (req, res) => {
+  try {
+    const body = req.body; //company_label, player_id, quantity,
+    const player_money = await User.getPlayerMoney(body.player_id);
+    const company = await User.getCompanyData(body.company_label);
+    company.actual_price = await User.getActualPrice(company.id);
+    const currentShares = await User.getSharesFromId(body.player_id, company.id);
+    const total_owned_shares = await User.getCompanyTotalOwnedShares(company.id);
+    
+    if(currentShares.quantity < body.quantity) {
+      throw new Error("Not enought shares in the stock wallet to sell " + body.quantity + " shares."); 
+    }
+
+    //BUY SHARES
+    await User.updateShares(body.player_id, company.id, Number(Number(currentShares.quantity) - Number(body.quantity)));
+    //ADD MONEY
+    await User.updateMoney(body.player_id, player_money + company.actual_price * body.quantity);
+
+    //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
+    let new_price = Number((company.actual_price - (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
+    let random = (Math.floor(Math.random() * 30) - 26) / 1000;
+    if(true) { //CREATE CONFIG RANDOM_PRICE_VARIATION = TRUE;
+      new_price = Number((new_price + (new_price * random)).toFixed(2));
+    }
+    await User.insertNewHistory(company.id, new_price);
+
+    res.status(200).json(new_price);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
 exports.postDepositMoney = async (req, res) => {
   try {
     const body = req.body; //player_id, deposit

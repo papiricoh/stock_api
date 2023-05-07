@@ -24,6 +24,9 @@ Example: `localhost:8080/api/user/withdraw` (Calling withdraw post method)
 * `/shares/buy`:
   * Buys a number of shares of a existing company
   * Post parameters are: `company_label, player_id, quantity`
+* `/shares/sell`:
+  * Sells a number of shares of a existing company
+  * Post parameters are: `company_label, player_id, quantity`
 * `/user/deposit`:
   * Buys a number of shares of a existing company
   * Post parameters are: `player_id, deposit`
