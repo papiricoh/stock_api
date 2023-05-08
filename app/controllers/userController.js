@@ -91,6 +91,19 @@ exports.getCompaniesList = async (req, res) => {
   }
 };
 
+exports.getGroupsList = async (req, res) => {
+  try {
+    const groups = await User.getAllGroups();
+    res.status(200).json(groups);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
 exports.postCreateCompany = async (req, res) => {
   try {
     const body = req.body; //name, label, owner_id, total_shares, initial_money, percentage_sold

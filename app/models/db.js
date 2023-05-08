@@ -24,6 +24,14 @@ const User = {
         }
         throw new Error('No Companies in the database');
     },
+    async getAllGroups() {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups`);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('No Groups in the database');
+    },
     async getCompanyData(label) {
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_companies WHERE company_label = ?`, 
