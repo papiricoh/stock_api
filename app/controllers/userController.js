@@ -2,6 +2,21 @@
 const User = require('../models/db');
 const controlerConfig = require("../config/controlerConfig.js");
 
+async function updateOwner(company_id) {
+  try {
+      let mayor_shareholder = await User.getMayorShareholder(id);
+      mayor_shareholder = mayor_shareholder.owner_id;
+      await User.changeOwner(mayor_shareholder, company_id);
+  } catch (owner_error) {
+    if (owner_error.message.includes("Shares of company with")) {
+      console.log("The company doesnt have owner asigning to NPC control");
+      await User.changeOwner("NPC", company_id);
+    }else {
+      throw owner_error;
+    } 
+  }
+}
+
 exports.getCompanyData = async (req, res) => {
   try {
     const { label } = req.params;
@@ -143,6 +158,9 @@ exports.postBuyShares = async (req, res) => {
     //REMOVE MONEY
     await User.updateMoney(body.player_id, player_money - company.actual_price * body.quantity);
 
+    //UPDATE OWNER
+    await updateOwner(company.id);
+    
     //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price + (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 4) / 1000;
@@ -178,6 +196,9 @@ exports.postSellShares = async (req, res) => {
     await User.updateShares(body.player_id, company.id, Number(Number(currentShares.quantity) - Number(body.quantity)));
     //ADD MONEY
     await User.updateMoney(body.player_id, player_money + company.actual_price * body.quantity);
+    
+    //UPDATE OWNER
+    await updateOwner(company.id);
 
     //UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price - (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));

@@ -205,6 +205,16 @@ const User = {
         }
         throw new Error('Unable to Insert Shares');
     },
+    async changeOwner(player_id, company_id) {
+        const [rows, fields] = await connection.promise().query(
+        `UPDATE stock_companies SET owner_id = ? WHERE id = ?`, 
+        [player_id, company_id]
+        );
+        if (rows.info) {
+            return rows;
+        }
+        throw new Error('Unable to Update Owner of company_id: ' + company_id);
+    },
 };
   
 module.exports = User;
