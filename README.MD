@@ -1,4 +1,4 @@
-# STOCK_API
+# STOCK_API - Expanded Version
 
 A aplication program interface for a game stock application, it can control buy and sell shares and create companies, using MySQL.
 
