@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 router.get('/users/:id', userController.getCheckUser);
+router.get('/group/:id', userController.getGroupById);
 router.get('/company/:label', userController.getCompanyData);
 router.get('/companies', userController.getCompaniesList);
 router.get('/groups', userController.getGroupsList);

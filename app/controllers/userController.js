@@ -94,8 +94,25 @@ exports.getCompaniesList = async (req, res) => {
 exports.getGroupsList = async (req, res) => {
   try {
     const groups = await User.getAllGroups();
-    await User.getGroupOwnedCompanies('group:1')
     res.status(200).json(groups);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
+exports.getGroupById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if(!id.includes("group:")) {
+        throw new Error('ID: ' + id + " is not a group identifier format: (group:0000)" );
+    }
+    const group_id = Number(id.substr(6));
+    const group = await User.getGroupById(group_id)
+    res.status(200).json(group);
   } catch (err) {
     if (err.message.includes("Not found")) {
       res.status(404).json({ error: err.message });
