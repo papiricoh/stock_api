@@ -6,7 +6,9 @@ async function updateOwner(company_id) {
   try {
       let mayor_shareholder = await User.getMayorShareholder(id);
       mayor_shareholder = mayor_shareholder.owner_id;
-      await User.changeOwner(mayor_shareholder, company_id);
+      if(mayor_shareholder != 'Index' || mayor_shareholder != 'NPC') {
+        await User.changeOwner(mayor_shareholder, company_id);
+      }
   } catch (owner_error) {
     if (owner_error.message.includes("Shares of company with")) {
       console.log("The company doesnt have owner asigning to NPC control");
@@ -160,7 +162,7 @@ exports.postBuyShares = async (req, res) => {
 
     //UPDATE OWNER
     await updateOwner(company.id);
-    
+
     //TODO: UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price + (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 4) / 1000;
