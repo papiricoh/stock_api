@@ -36,7 +36,7 @@ const User = {
     },
     async getCompanyHistory(id) {
         const [rows, fields] = await connection.promise().query(
-        `SELECT * FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 40;`, 
+        `SELECT * FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 100;`, 
         [id]
         );
         if (rows.length) {
