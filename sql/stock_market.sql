@@ -4,6 +4,17 @@ DROP TABLE IF EXISTS stock_history;
 DROP TABLE IF EXISTS stock_shares;
 DROP TABLE IF EXISTS stock_wallet;
 DROP TABLE IF EXISTS stock_companies;
+DROP TABLE IF EXISTS stock_groups;
+
+CREATE TABLE IF NOT EXISTS stock_groups(
+	id int AUTO_INCREMENT,
+	group_name VARCHAR(60) NOT NULL,
+	group_label VARCHAR(60) NOT NULL,
+	owner_id VARCHAR(100) NOT NULL,
+	money INT DEFAULT 0,
+	UNIQUE (group_label),
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS stock_companies(
 	id int AUTO_INCREMENT,
@@ -62,8 +73,10 @@ VALUES ('steam:2019302', 1000, 1);
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2024302', 3000, 1);
 
+INSERT INTO stock_groups (id, group_name, group_label, owner_id)
+VALUES (1, 'Blaine National Services Group', 'BNS', 'NPC');
 INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
-VALUES (2, 'Blaine National Quarry Company', 'BNQC', 'NPC', 20000);
+VALUES (2, 'Blaine National Quarry Company', 'BNQC', 'group:1', 20000);
 INSERT INTO stock_history (price, volume, company_id, movement_date)
 VALUES (20000, 2358023.23, 2, '1980-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
@@ -75,6 +88,8 @@ VALUES (20000, 2358023.23, 2, '2010-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
 VALUES (20000, 2358023.23, 2, '2020-01-01 00:00:00.1');
 
+INSERT INTO stock_shares (owner_id, quantity, company_id)
+VALUES ('group:1', 15000, 2);
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('steam:2019302', 1000, 2);
 INSERT INTO stock_shares (owner_id, quantity, company_id)
