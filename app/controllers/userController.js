@@ -4,10 +4,15 @@ const controlerConfig = require("../config/controlerConfig.js");
 
 async function updateOwner(company_id) {
   try {
-      let mayor_shareholder = await User.getMayorShareholder(id);
-      mayor_shareholder = mayor_shareholder.owner_id;
-      if(mayor_shareholder != 'Index' || mayor_shareholder != 'NPC') {
-        await User.changeOwner(mayor_shareholder, company_id);
+      let mayor_shareholder = await User.getMayorShareholder(company_id);
+      if(mayor_shareholder.quantity <= 0) {
+        console.log("The company doesnt have owner asigning to NPC control");
+        await User.changeOwner("NPC", company_id);
+      }else {
+        mayor_shareholder = mayor_shareholder.owner_id;
+        if(mayor_shareholder != 'Index' && mayor_shareholder != 'NPC') {
+          await User.changeOwner(mayor_shareholder, company_id);
+        }
       }
   } catch (owner_error) {
     if (owner_error.message.includes("Shares of company with")) {
