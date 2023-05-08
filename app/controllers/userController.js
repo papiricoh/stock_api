@@ -94,6 +94,7 @@ exports.getCompaniesList = async (req, res) => {
 exports.getGroupsList = async (req, res) => {
   try {
     const groups = await User.getAllGroups();
+    await User.getGroupOwnedCompanies('group:1')
     res.status(200).json(groups);
   } catch (err) {
     if (err.message.includes("Not found")) {

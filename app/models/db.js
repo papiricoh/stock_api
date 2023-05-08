@@ -32,6 +32,37 @@ const User = {
         }
         throw new Error('No Groups in the database');
     },
+    async getGroupById(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups WHERE id = ?`,
+        [id]);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('Group with id: ' + id + " -> Doesnt Exist");
+    },
+    async getGroupByLabel(label) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups WHERE group_label = ?`,
+        [label]);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('Group with label: ' + label + " -> Doesnt Exist");
+    },
+    async getGroupOwnedCompanies(group_id) { //In format: (group:0000)
+        if(!group_id.includes("group:")) {
+            throw new Error('ID: ' + group_id + " is not a group identifier format: (group:0000)" );
+        }
+        group_id = Number(group_id.substr(6));
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_companies WHERE owner_id = ?`,
+        [group_id]);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('Group with label: ' + group_id + " -> Doesnt Exist");
+    },
     async getCompanyData(label) {
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_companies WHERE company_label = ?`, 
