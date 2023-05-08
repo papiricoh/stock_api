@@ -111,8 +111,8 @@ exports.postCreateCompany = async (req, res) => {
         //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
         const new_company_label = await User.insertNewCompany(company);
         const new_company = await User.getCompanyData(new_company_label);
-        await User.insertInitialHistory(new_company.id, company.current_price);
-        await User.insertInitialHistory(new_company.id, company.current_price);
+        await User.insertInitialHistory(new_company.id, company.current_price, body.initial_money);
+        await User.insertInitialHistory(new_company.id, company.current_price, body.initial_money);
         if(checkOwner != null) {
           await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
           //REMOVE PLAYER MONEY
@@ -174,7 +174,7 @@ exports.postBuyShares = async (req, res) => {
     if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
-    await User.insertNewHistory(company.id, new_price);
+    await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
 
     res.status(200).json(new_price);
   } catch (err) {
@@ -213,7 +213,7 @@ exports.postSellShares = async (req, res) => {
     if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
-    await User.insertNewHistory(company.id, new_price);
+    await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
 
     res.status(200).json(new_price);
   } catch (err) {

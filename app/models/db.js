@@ -155,10 +155,10 @@ const User = {
         }
         throw new Error('Failed to insert wallet');
     },
-    async insertInitialHistory(id, current_price) {
+    async insertInitialHistory(id, current_price, volume) {
         const [rows, fields] = await connection.promise().query(
-        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
-        [current_price, id]
+        `INSERT INTO stock_history (price, volume, company_id) VALUES (?, ?, ?)`, 
+        [current_price, volume, id]
         );
         if (rows.insertId) {
             return current_price;
@@ -185,10 +185,10 @@ const User = {
         }
         throw new Error('Unable to Insert Shares');
     },
-    async insertNewHistory(company_id, new_price) {
+    async insertNewHistory(company_id, new_price, volume) {
         const [rows, fields] = await connection.promise().query(
-        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
-        [new_price, company_id]
+        `INSERT INTO stock_history (price, volume, company_id) VALUES (?, ?, ?)`, 
+        [new_price, volume, company_id]
         );
         if (rows.insertId) {
             return rows;
