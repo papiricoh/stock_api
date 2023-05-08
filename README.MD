@@ -7,6 +7,10 @@ A aplication program interface for a game stock application, it can control buy 
 All API calls begin with a `/api/` folowing the method.
 Example: `localhost:8080/api/user/withdraw` (Calling withdraw post method)
 
+#### Ruleset:
+- users id start with `steam:` followed of an id
+- company groups id start with `group:` followed of an id
+
 ### Get Requests
 
 * `/users/:id`:
