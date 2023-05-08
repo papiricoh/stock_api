@@ -64,6 +64,17 @@ const User = {
         }
         throw new Error('Shares of company with id: ' + id + ' -> Not found');
     },
+    async getMayorShareholder(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_shares WHERE company_id = ? ORDER BY quantity DESC
+        LIMIT 1;`, 
+        [id]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Shares of company with id: ' + id + ' -> Not found');
+    },
     async checkCompanyLabelAvariability(label) {
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_companies WHERE company_label = ?`, 
