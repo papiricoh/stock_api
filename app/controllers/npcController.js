@@ -1,5 +1,25 @@
 const User = require('../models/db');
 
+async function calculateEMA(data, window) {
+    var multiplier = 2 / (window + 1);
+    // create a copy of the data
+    var emaArr = data.slice(0);
+
+    // Seed the first value
+    var seed = data.slice(0, window).reduce((total, curr) => total + curr) / window;
+
+    // Calculate EMA
+    for (var i = 0; i < data.length; i++) {
+        if (i < window) {
+            emaArr[i] = seed;
+        } else {
+            emaArr[i] = (data[i] - emaArr[i - 1]) * multiplier + emaArr[i - 1];
+        }
+    }
+
+    return emaArr;
+}
+
 async function getCompanyByLabel(label) {
     const company = await User.getCompanyData(label);
     const comp = await User.getCompanyHistory(company.id);
