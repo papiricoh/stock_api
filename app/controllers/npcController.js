@@ -1,14 +1,14 @@
 const User = require('../models/db');
 
-exports.example = async (req, res) => {
+exports.npcMovement = async (req, res) => {
     try {
-        
-        res.status(200).json(0);
-    } catch (err) {
-        if (err.message.includes("Not found")) {
-        res.status(404).json({ error: err.message });
-        } else {
-        res.status(500).json({ error: "Internal Server Error: " + err.message });
+        const all_companies_labels = await User.getAllCompaniesLabels();
+        for (let index = 0; index < all_companies_labels.length; index++) {
+            const company = await User.getCompanyData(all_companies_labels[index].company_label);
+            
         }
+        console.log("NPC Movements executed");
+    } catch (err) {
+        console.error("Internal Server Error: " + err.message );
     }
 };
