@@ -290,3 +290,23 @@ exports.postWithdrawMoney = async (req, res) => {
     }
   }
 };
+
+exports.postAbsorbCompany = async (req, res) => {
+  try {
+    const body = req.body; //owner_id, company_label, group_label
+    const company = await User.getCompanyData(body.company_label);
+    const group = await User.getGroupByLabel(body.group_label);
+    if (body.owner_id == company.owner_id && company.owner_id == group.owner_id) {
+      await User.changeOwner('group:' + group.id, company.id);
+    }else {
+      throw new Error('User: ' + owner_id + ' is not owner of group or company');
+    }
+    res.status(200).json(group);
+  } catch (err) {
+    if (err.message.includes("is not owner")) {
+      res.status(404).json({ error: 'Player Error: ' + err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};

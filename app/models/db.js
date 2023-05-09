@@ -37,7 +37,7 @@ const User = {
         `SELECT * FROM stock_groups WHERE id = ?`,
         [id]);
         if (rows.length) {
-            return rows;
+            return rows[0];
         }
         throw new Error('Group with id: ' + id + " -> Doesnt Exist");
     },
@@ -46,7 +46,7 @@ const User = {
         `SELECT * FROM stock_groups WHERE group_label = ?`,
         [label]);
         if (rows.length) {
-            return rows;
+            return rows[0];
         }
         throw new Error('Group with label: ' + label + " -> Doesnt Exist");
     },

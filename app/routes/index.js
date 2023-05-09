@@ -12,5 +12,6 @@ router.post('/shares/buy', userController.postBuyShares); //company_label, playe
 router.post('/shares/sell', userController.postSellShares); //company_label, player_id, quantity,
 router.post('/user/deposit', userController.postDepositMoney); //player_id, deposit
 router.post('/user/withdraw', userController.postWithdrawMoney); //player_id, withdraw
+router.post('/company/group_absorb', userController.postAbsorbCompany); //owner_id, company_label, group_label
 
 module.exports = router;
