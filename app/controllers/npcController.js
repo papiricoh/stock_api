@@ -29,6 +29,9 @@ exports.npcMovement = async (req, res) => {
                     throw err_shares;
                 }
             }
+            let quantity = Math.floor(Math.random() * 50) + Number(1);
+            const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
+            const canSell = Boolean(currentShares - quantity >= 0);
             
         }
         console.log("NPC Movements executed");
