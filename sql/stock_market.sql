@@ -58,13 +58,13 @@ CREATE TABLE IF NOT EXISTS stock_wallet(
 INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
 VALUES (1, 'Los Santos National Index', 'LSNI', 'Index', 200000);
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 1, '1980-01-01 00:00:00.1');
+VALUES (2000, 2358023.23, 1, '1980-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 1, '1990-01-01 00:00:00.1');
+VALUES (15000, 2358023.23, 1, '1990-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 1, '2000-01-01 00:00:00.1');
+VALUES (12000, 2358023.23, 1, '2000-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 1, '2010-01-01 00:00:00.1');
+VALUES (17000, 2358023.23, 1, '2010-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
 VALUES (20000, 2358023.23, 1, '2020-01-01 00:00:00.1');
 
@@ -78,15 +78,15 @@ VALUES (1, 'Blaine National Services Group', 'BNS', 'NPC');
 INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_shares)
 VALUES (2, 'Blaine National Quarry Company', 'BNQC', 'group:1', 20000);
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 2, '1980-01-01 00:00:00.1');
+VALUES (62000, 2358023.23, 2, '1980-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 2, '1990-01-01 00:00:00.1');
+VALUES (63000, 2358023.23, 2, '1990-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 2, '2000-01-01 00:00:00.1');
+VALUES (23000, 2358023.23, 2, '2000-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 2, '2010-01-01 00:00:00.1');
+VALUES (12000, 2358023.23, 2, '2010-01-01 00:00:00.1');
 INSERT INTO stock_history (price, volume, company_id, movement_date)
-VALUES (20000, 2358023.23, 2, '2020-01-01 00:00:00.1');
+VALUES (5000, 2358023.23, 2, '2020-01-01 00:00:00.1');
 
 INSERT INTO stock_shares (owner_id, quantity, company_id)
 VALUES ('group:1', 15000, 2);

@@ -2,22 +2,19 @@ const User = require('../models/db');
 
 async function calculateEMA(data, window) {
     var multiplier = 2 / (window + 1);
-    // create a copy of the data
-    var emaArr = data.slice(0);
+    // create an array to hold the EMA values
+    var emaArr = new Array(data.length);
 
-    // Seed the first value
+    // Calculate the seed (the first EMA value), which is just the average of the first 'window' days
     var seed = data.slice(0, window).reduce((total, curr) => total + curr) / window;
+    emaArr[window - 1] = seed;
 
-    // Calculate EMA
-    for (var i = 0; i < data.length; i++) {
-        if (i < window) {
-            emaArr[i] = seed;
-        } else {
-            emaArr[i] = (data[i] - emaArr[i - 1]) * multiplier + emaArr[i - 1];
-        }
+    // Calculate EMA for the rest of the data
+    for (var i = window; i < data.length; i++) {
+        emaArr[i] = (data[i] - emaArr[i - 1]) * multiplier + emaArr[i - 1];
     }
 
-    return emaArr;
+    return emaArr[emaArr.length - 1];
 }
 
 async function getCompanyByLabel(label) {
@@ -52,7 +49,18 @@ exports.npcMovement = async (req, res) => {
             let quantity = Math.floor(Math.random() * 50) + Number(1);
             const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
             const canSell = Boolean(currentShares - quantity >= 0);
-            
+            let emaWindow = 10;//Number of days
+            if(emaWindow > company.history.length) {
+                emaWindow = company.history.length;
+            }
+            let emaData = [];
+            for (let index = 0; index < company.history.length; index++) {
+                emaData[index] = company.history[index].price;
+            }
+            const ema = await calculateEMA( emaData, emaWindow);
+            console.log(company.company_label + " Ema: -> " + ema);
+            //IF EMA > actual_price -> Price down (Buy??)
+            //IF EMA < actual_price -> Price up (Sell??)
         }
         console.log("NPC Movements executed");
     } catch (err) {
