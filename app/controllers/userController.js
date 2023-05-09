@@ -34,7 +34,7 @@ exports.getCompanyData = async (req, res) => {
     if(ownedShares.totalOwnedShares == null) {
       ownedShares.totalOwnedShares = 0;
     }
-    company.shares = { avariableShares: company.total_shares - ownedShares.totalOwnedShares, ownedShares: ownedShares.totalOwnedShares}
+    company.shares = { avariableShares: company.total_shares - ownedShares.totalOwnedShares, ownedShares: Number(ownedShares.totalOwnedShares)}
     res.status(200).json(company);
   } catch (err) {
     if (err.message.includes("Not found")) {
