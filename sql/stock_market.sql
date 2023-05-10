@@ -103,3 +103,5 @@ INSERT INTO stock_companies (id, company_name, company_label, owner_id, total_sh
 VALUES (3, 'Test', 'TEST', 'steam:2019302', 200000);
 INSERT INTO stock_history (price, company_id, volume, movement_date)
 VALUES (20000, 3, 2000.32, '1980-01-01 00:00:00.1');
+INSERT INTO stock_history (price, company_id, volume, movement_date)
+VALUES (24000, 3, 2000.32, '1984-01-01 00:00:00.1');

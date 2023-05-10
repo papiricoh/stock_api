@@ -46,7 +46,7 @@ exports.npcMovement = async (req, res) => {
                     throw err_shares;
                 }
             }
-            let quantity = Math.floor(Math.random() * 50) + Number(1);
+            let quantity = Math.floor(Math.random() * 40) + Number(10);
             const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
             const canSell = Boolean(currentShares - quantity >= 0);
             let emaWindow = 10;//Number of days
@@ -54,16 +54,34 @@ exports.npcMovement = async (req, res) => {
                 emaWindow = company.history.length;
             }
             let emaData = [];
-            for (let index = 0; index < company.history.length; index++) {
+            const actualPrice = company.history[company.history.length - 1];
+            for (let index = 0; index < company.history.length - 1; index++) {
                 emaData[index] = company.history[index].price;
             }
             const ema = await calculateEMA( emaData, emaWindow);
             console.log(company.company_label + " Ema: -> " + ema);
-            //IF EMA > actual_price -> Price down (Buy??)
-            //IF EMA < actual_price -> Price up (Sell??)
+
+            if(canBuy && ema > actualPrice.price) { //IF EMA > actual_price -> Price down (Buy??)
+                await User.updateShares("NPC", company.id, Number(currentShares + Number(quantity)));
+
+                let new_price = Number((actualPrice.price + (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
+            }else if(canSell && ema < actualPrice.price) { //IF EMA < actual_price -> Price up (Sell??)
+                await User.updateShares("NPC", company.id, Number(currentShares - Number(quantity)));
+
+                let new_price = Number((actualPrice.price - (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
+                
+            }else if(canBuy) {
+                quantity = quantity - 9;
+                await User.updateShares("NPC", company.id, Number(currentShares + Number(quantity)));
+
+                let new_price = Number((actualPrice.price + (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
+            }
         }
         console.log("NPC Movements executed");
     } catch (err) {
-        console.error("Internal Server Error: " + err.message );
+        console.error("Internal Server Error: " + err.message + ". In line number: " + err.lineNumber );
     }
 };

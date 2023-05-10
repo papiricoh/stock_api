@@ -241,7 +241,7 @@ exports.postSellShares = async (req, res) => {
     //UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price - (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 26) / 1000;
-    if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
+    if(controlerConfig.RANDOM_PRICE_VARIATION && Number((new_price + (new_price * random)).toFixed(2)) > 0) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
     await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
