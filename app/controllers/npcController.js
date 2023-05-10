@@ -46,7 +46,7 @@ exports.npcMovement = async (req, res) => {
                     throw err_shares;
                 }
             }
-            let quantity = Math.floor(Math.random() * 400) + Number(50);
+            let quantity =Number((company.total_shares * 0.1).toFixed(0));
             const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
             const canSell = Boolean(currentShares - quantity >= 0);
             let emaWindow = 10;//Number of days
