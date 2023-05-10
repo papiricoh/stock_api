@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS stock_wallet(
 	id INT AUTO_INCREMENT,
 	owner_id VARCHAR(100) NOT NULL,
 	money INT DEFAULT '0',
+	total_deposit INT DEFAULT '0',
 	PRIMARY KEY (id),
 	UNIQUE (owner_id)
 );

@@ -259,7 +259,8 @@ exports.postDepositMoney = async (req, res) => {
   try {
     const body = req.body; //player_id, deposit
     const player_money = await User.getPlayerMoney(body.player_id);
-    await User.updateMoney(body.player_id, Number(player_money) + Number(body.deposit));
+    const wallet = await User.getPlayerWallet(body.player_id);
+    await User.updateMoney(body.player_id, Number(player_money) + Number(body.deposit),  Number(wallet.total_deposit) + Number(body.deposit));
 
     res.status(200).json(Number(player_money) + Number(body.deposit));
   } catch (err) {
@@ -278,7 +279,8 @@ exports.postWithdrawMoney = async (req, res) => {
     if(Number(player_money) - Number(body.withdraw) < 0) {
       throw new Error('Not enough money in the wallet to withdraw, wallet: ' + player_money + ' amount to withdraw: ' + body.withdraw );
     }
-    await User.updateMoney(body.player_id, Number(player_money) - Number(body.withdraw));
+    const wallet = await User.getPlayerWallet(body.player_id);
+    await User.updateMoney(body.player_id, Number(player_money) - Number(body.withdraw), Number(wallet.total_deposit) - Number(body.withdraw));
 
     res.status(200).json(Number(player_money) - Number(body.withdraw));
   } catch (err) {

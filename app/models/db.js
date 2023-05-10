@@ -144,6 +144,16 @@ const User = {
         }
         throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
     },
+    async getPlayerWallet(player) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_wallet WHERE owner_id = ?`, 
+        [player]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
+    },
     async getSharesFromId(id, company_id) { //player = id
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_shares WHERE owner_id = ? AND company_id = ?`, 
@@ -164,10 +174,10 @@ const User = {
         }
         throw new Error('User with id: ' + id + ' -> Dont have a stock wallet');
     },
-    async updateMoney(user_id, money) {
+    async updateMoney(user_id, money, total_deposit) {
         const [rows, fields] = await connection.promise().query(
-        `UPDATE stock_wallet SET money = ? WHERE owner_id = ?`, 
-        [money, user_id]
+        `UPDATE stock_wallet SET money = ?, total_deposit = ? WHERE owner_id = ?`, 
+        [money, total_deposit, user_id]
         );
         if (rows.info) {
             return rows;
