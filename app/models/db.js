@@ -160,7 +160,7 @@ const User = {
         [id]
         );
         if (rows.length) {
-            return id;
+            return rows[0];
         }
         throw new Error('User with id: ' + id + ' -> Dont have a stock wallet');
     },

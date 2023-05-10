@@ -48,19 +48,18 @@ exports.getCompanyData = async (req, res) => {
 exports.getCheckUser = async (req, res) => {
   try {
     const { id } = req.params;
-    let message = "";
+    let wallet = null;
     try {
-      await User.getCheckUser(id);
-      message = "User logged in";
+      wallet = await User.getCheckUser(id);
     } catch (error_user_notFound) {
       if (error_user_notFound.message.includes("Dont have a stock wallet")) {
         await User.insertNewWallet(id);
-        message = "User Wallet Created";
+        wallet = await User.getCheckUser(id);
       } else {
         throw error_user_notFound;
       }
     }
-    res.status(200).json(message);
+    res.status(200).json(wallet);
   } catch (err) {
     if (err.message.includes("Not found")) {
       res.status(404).json({ error: err.message });
