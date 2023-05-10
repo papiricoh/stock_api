@@ -34,7 +34,7 @@ exports.getCompanyData = async (req, res) => {
     if(ownedShares.totalOwnedShares == null) {
       ownedShares.totalOwnedShares = 0;
     }
-    company.shares = { avariableShares: company.total_shares - ownedShares.totalOwnedShares, ownedShares: ownedShares.totalOwnedShares}
+    company.shares = { avariableShares: company.total_shares - ownedShares.totalOwnedShares, ownedShares: Number(ownedShares.totalOwnedShares)}
     res.status(200).json(company);
   } catch (err) {
     if (err.message.includes("Not found")) {
@@ -91,6 +91,37 @@ exports.getCompaniesList = async (req, res) => {
   }
 };
 
+exports.getGroupsList = async (req, res) => {
+  try {
+    const groups = await User.getAllGroups();
+    res.status(200).json(groups);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
+exports.getGroupById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if(!id.includes("group:")) {
+        throw new Error('ID: ' + id + " is not a group identifier format: (group:0000)" );
+    }
+    const group_id = Number(id.substr(6));
+    const group = await User.getGroupById(group_id)
+    res.status(200).json(group);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
 exports.postCreateCompany = async (req, res) => {
   try {
     const body = req.body; //name, label, owner_id, total_shares, initial_money, percentage_sold
@@ -111,8 +142,8 @@ exports.postCreateCompany = async (req, res) => {
         //TODO SQL INSERTS: COMPANY, HISTORY AND OWNER STOCK WALLET
         const new_company_label = await User.insertNewCompany(company);
         const new_company = await User.getCompanyData(new_company_label);
-        await User.insertInitialHistory(new_company.id, company.current_price);
-        await User.insertInitialHistory(new_company.id, company.current_price);
+        await User.insertInitialHistory(new_company.id, company.current_price, body.initial_money);
+        await User.insertInitialHistory(new_company.id, company.current_price, body.initial_money);
         if(checkOwner != null) {
           await User.insertInitialOwnerStockShares(new_company.id, body.owner_id, company.owner_shares);
           //REMOVE PLAYER MONEY
@@ -174,7 +205,7 @@ exports.postBuyShares = async (req, res) => {
     if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
-    await User.insertNewHistory(company.id, new_price);
+    await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
 
     res.status(200).json(new_price);
   } catch (err) {
@@ -210,10 +241,10 @@ exports.postSellShares = async (req, res) => {
     //UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price - (company.actual_price * ( body.quantity / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 26) / 1000;
-    if(controlerConfig.RANDOM_PRICE_VARIATION) { //RANDOM_PRICE_VARIATION = TRUE;
+    if(controlerConfig.RANDOM_PRICE_VARIATION && Number((new_price + (new_price * random)).toFixed(2)) > 0) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
-    await User.insertNewHistory(company.id, new_price);
+    await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
 
     res.status(200).json(new_price);
   } catch (err) {
@@ -253,6 +284,26 @@ exports.postWithdrawMoney = async (req, res) => {
     res.status(200).json(Number(player_money) - Number(body.withdraw));
   } catch (err) {
     if (err.message.includes("Not enough")) {
+      res.status(404).json({ error: 'Player Error: ' + err.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error: " + err.message });
+    }
+  }
+};
+
+exports.postAbsorbCompany = async (req, res) => {
+  try {
+    const body = req.body; //owner_id, company_label, group_label
+    const company = await User.getCompanyData(body.company_label);
+    const group = await User.getGroupByLabel(body.group_label);
+    if (body.owner_id == company.owner_id && company.owner_id == group.owner_id) {
+      await User.changeOwner('group:' + group.id, company.id);
+    }else {
+      throw new Error('User: ' + owner_id + ' is not owner of group or company');
+    }
+    res.status(200).json(group);
+  } catch (err) {
+    if (err.message.includes("is not owner")) {
       res.status(404).json({ error: 'Player Error: ' + err.message });
     } else {
       res.status(500).json({ error: "Internal Server Error: " + err.message });

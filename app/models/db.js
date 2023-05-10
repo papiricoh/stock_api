@@ -24,6 +24,45 @@ const User = {
         }
         throw new Error('No Companies in the database');
     },
+    async getAllGroups() {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups`);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('No Groups in the database');
+    },
+    async getGroupById(id) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups WHERE id = ?`,
+        [id]);
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Group with id: ' + id + " -> Doesnt Exist");
+    },
+    async getGroupByLabel(label) {
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_groups WHERE group_label = ?`,
+        [label]);
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Group with label: ' + label + " -> Doesnt Exist");
+    },
+    async getGroupOwnedCompanies(group_id) { //In format: (group:0000)
+        if(!group_id.includes("group:")) {
+            throw new Error('ID: ' + group_id + " is not a group identifier format: (group:0000)" );
+        }
+        group_id = Number(group_id.substr(6));
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_companies WHERE owner_id = ?`,
+        [group_id]);
+        if (rows.length) {
+            return rows;
+        }
+        throw new Error('Group with label: ' + group_id + " -> Doesnt Exist");
+    },
     async getCompanyData(label) {
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_companies WHERE company_label = ?`, 
@@ -36,7 +75,7 @@ const User = {
     },
     async getCompanyHistory(id) {
         const [rows, fields] = await connection.promise().query(
-        `SELECT * FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 40;`, 
+        `SELECT * FROM stock_history WHERE company_id = ? ORDER BY movement_date DESC LIMIT 100;`, 
         [id]
         );
         if (rows.length) {
@@ -155,10 +194,10 @@ const User = {
         }
         throw new Error('Failed to insert wallet');
     },
-    async insertInitialHistory(id, current_price) {
+    async insertInitialHistory(id, current_price, volume) {
         const [rows, fields] = await connection.promise().query(
-        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
-        [current_price, id]
+        `INSERT INTO stock_history (price, volume, company_id) VALUES (?, ?, ?)`, 
+        [current_price, volume, id]
         );
         if (rows.insertId) {
             return current_price;
@@ -185,10 +224,10 @@ const User = {
         }
         throw new Error('Unable to Insert Shares');
     },
-    async insertNewHistory(company_id, new_price) {
+    async insertNewHistory(company_id, new_price, volume) {
         const [rows, fields] = await connection.promise().query(
-        `INSERT INTO stock_history (price, company_id) VALUES (?, ?)`, 
-        [new_price, company_id]
+        `INSERT INTO stock_history (price, volume, company_id) VALUES (?, ?, ?)`, 
+        [new_price, volume, company_id]
         );
         if (rows.insertId) {
             return rows;
