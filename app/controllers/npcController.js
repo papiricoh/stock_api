@@ -66,26 +66,26 @@ exports.npcMovement = async (req, res) => {
                 await User.updateShares("NPC", company.id, Number(currentShares + Number(quantity)));
                 console.log("Can buy: " + quantity);
 
-                let new_price = Number((actualPrice.price + (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                let new_price = Number((actualPrice.price + (quantity * ( actualPrice.price / company.total_shares ))).toFixed(2));
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
             }else if(canSell && ema < actualPrice.price) { //IF EMA < actual_price -> Price up (Sell??)
                 await User.updateShares("NPC", company.id, Number(currentShares - Number(quantity)));
                 console.log("Can sell: " + quantity);
 
-                let new_price = Number((actualPrice.price - (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                let new_price = Number((actualPrice.price - (quantity * ( actualPrice.price / company.total_shares ))).toFixed(2));
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
                 
             }else if(canBuy) {
                 quantity = quantity - 49;
                 await User.updateShares("NPC", company.id, Number(currentShares + Number(quantity)));
                 console.log("Can buy alternative: " + quantity);
-                let new_price = Number((actualPrice.price + (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                let new_price = Number((actualPrice.price + (quantity * ( actualPrice.price / company.total_shares ))).toFixed(2));
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
             }else if(canSell) {
                 quantity = quantity - 49;
                 await User.updateShares("NPC", company.id, Number(currentShares - Number(quantity)));
                 console.log("Can sell alternative: " + quantity);
-                let new_price = Number((actualPrice.price - (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
+                let new_price = Number((actualPrice.price - (quantity * ( actualPrice.price / company.total_shares ))).toFixed(2));
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
             }
         }
