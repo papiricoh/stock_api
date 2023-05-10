@@ -46,7 +46,7 @@ exports.npcMovement = async (req, res) => {
                     throw err_shares;
                 }
             }
-            let quantity = Math.floor(Math.random() * 40) + Number(10);
+            let quantity = Math.floor(Math.random() * 400) + Number(50);
             const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
             const canSell = Boolean(currentShares - quantity >= 0);
             let emaWindow = 10;//Number of days
@@ -73,7 +73,7 @@ exports.npcMovement = async (req, res) => {
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
                 
             }else if(canBuy) {
-                quantity = quantity - 9;
+                quantity = quantity - 49;
                 await User.updateShares("NPC", company.id, Number(currentShares + Number(quantity)));
 
                 let new_price = Number((actualPrice.price + (actualPrice.price * ( quantity / company.total_shares ))).toFixed(2));
