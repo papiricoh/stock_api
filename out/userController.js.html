@@ -1,4 +1,32 @@
-// Importar modelo de usuario
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: userController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: userController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Importar modelo de usuario
 const User = require('../models/db');
 const controlerConfig = require("../config/controlerConfig.js");
 
@@ -9,12 +37,12 @@ const controlerConfig = require("../config/controlerConfig.js");
 async function updateOwner(company_id) {
   try {
       let mayor_shareholder = await User.getMayorShareholder(company_id);
-      if(mayor_shareholder.quantity <= 0) {
+      if(mayor_shareholder.quantity &lt;= 0) {
         console.log("The company doesnt have owner asigning to NPC control");
         await User.changeOwner("NPC", company_id);
       }else {
         mayor_shareholder = mayor_shareholder.owner_id;
-        if(mayor_shareholder != 'Index' && mayor_shareholder != 'NPC') {
+        if(mayor_shareholder != 'Index' &amp;&amp; mayor_shareholder != 'NPC') {
           await User.changeOwner(mayor_shareholder, company_id);
         }
       }
@@ -87,7 +115,7 @@ exports.getCompaniesList = async (req, res) => {
   try {
     const companiesIDs = await User.getAllCompaniesLabels();
     const result = [];
-    for (let index = 0; index < companiesIDs.length; index++) {
+    for (let index = 0; index &lt; companiesIDs.length; index++) {
       let company = {};
       company = await User.getCompanyData(companiesIDs[index].company_label);
       company.actual_price = await User.getActualPrice(company.id);
@@ -147,7 +175,7 @@ exports.postCreateCompany = async (req, res) => {
     }
     //CHECK OWNER MONEY AVARIABILITY 
     if(avariable_money >= body.initial_money || body.owner_id == 'Index' || body.owner_id == 'NPC') {
-      if(await User.checkCompanyLabelAvariability(body.label) && await User.checkCompanyOwnerAvariability(checkOwner)) {
+      if(await User.checkCompanyLabelAvariability(body.label) &amp;&amp; await User.checkCompanyOwnerAvariability(checkOwner)) {
         let sold_money = Number((body.initial_money * body.percentage_sold).toFixed(2));
         let sold_shares = Number((body.total_shares * body.percentage_sold).toFixed(2));
         let company_price = Number((sold_money / sold_shares).toFixed(2)); 
@@ -185,10 +213,10 @@ exports.postBuyShares = async (req, res) => {
     const company = await User.getCompanyData(body.company_label);
     company.actual_price = await User.getActualPrice(company.id);
     const total_owned_shares = await User.getCompanyTotalOwnedShares(company.id);
-    if(company.total_shares < body.quantity + total_owned_shares.totalOwnedShares) { //check total shares avariability
+    if(company.total_shares &lt; body.quantity + total_owned_shares.totalOwnedShares) { //check total shares avariability
       throw new Error("Not enought shares in the company to buy " + body.quantity + " shares."); 
     }
-    if(player_money < company.actual_price * body.quantity) {
+    if(player_money &lt; company.actual_price * body.quantity) {
       throw new Error("Not enought money in the stock wallet to buy " + body.quantity + " shares."); 
     }
     let currentShares = 0;
@@ -239,7 +267,7 @@ exports.postSellShares = async (req, res) => {
     const currentShares = await User.getSharesFromId(body.player_id, company.id);
     const total_owned_shares = await User.getCompanyTotalOwnedShares(company.id);
     
-    if(currentShares.quantity < body.quantity) {
+    if(currentShares.quantity &lt; body.quantity) {
       throw new Error("Not enought shares in the stock wallet to sell " + body.quantity + " shares."); 
     }
 
@@ -254,7 +282,7 @@ exports.postSellShares = async (req, res) => {
     //UPDATE HISTORY MAKING A NEW REGISTER WITH FORMULA
     let new_price = Number((company.actual_price - (body.quantity * ( company.actual_price / company.total_shares ))).toFixed(2));
     let random = (Math.floor(Math.random() * 30) - 26) / 1000;
-    if(controlerConfig.RANDOM_PRICE_VARIATION && Number((new_price + (new_price * random)).toFixed(2)) > 0) { //RANDOM_PRICE_VARIATION = TRUE;
+    if(controlerConfig.RANDOM_PRICE_VARIATION &amp;&amp; Number((new_price + (new_price * random)).toFixed(2)) > 0) { //RANDOM_PRICE_VARIATION = TRUE;
       new_price = Number((new_price + (new_price * random)).toFixed(2));
     }
     await User.insertNewHistory(company.id, new_price, company.actual_price * body.quantity);
@@ -290,7 +318,7 @@ exports.postWithdrawMoney = async (req, res) => {
   try {
     const body = req.body; //player_id, withdraw
     const player_money = await User.getPlayerMoney(body.player_id);
-    if(Number(player_money) - Number(body.withdraw) < 0) {
+    if(Number(player_money) - Number(body.withdraw) &lt; 0) {
       throw new Error('Not enough money in the wallet to withdraw, wallet: ' + player_money + ' amount to withdraw: ' + body.withdraw );
     }
     const wallet = await User.getPlayerWallet(body.player_id);
@@ -311,7 +339,7 @@ exports.postAbsorbCompany = async (req, res) => {
     const body = req.body; //owner_id, company_label, group_label
     const company = await User.getCompanyData(body.company_label);
     const group = await User.getGroupByLabel(body.group_label);
-    if (body.owner_id == company.owner_id && company.owner_id == group.owner_id) {
+    if (body.owner_id == company.owner_id &amp;&amp; company.owner_id == group.owner_id) {
       await User.changeOwner('group:' + group.id, company.id);
     }else {
       throw new Error('User: ' + owner_id + ' is not owner of group or company');
@@ -325,3 +353,26 @@ exports.postAbsorbCompany = async (req, res) => {
     }
   }
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getCheckUser">getCheckUser</a></li><li><a href="global.html#getCompanyData">getCompanyData</a></li><li><a href="global.html#updateOwner">updateOwner</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu May 11 2023 11:12:35 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
