@@ -47,7 +47,7 @@ exports.npcMovement = async (req, res) => {
                     throw err_shares;
                 }
             }
-            let quantity = Number(((company.total_shares * 0.1) * ((Math.random(200) / 100) + 0.5)).toFixed(0) );
+            let quantity = Number((Math.random() * 200) + 50).toFixed(0);
             const canBuy = Boolean(company.shares.avariableShares - quantity >= 0);
             const canSell = Boolean(currentShares - quantity >= 0);
             console.log(canBuy, canSell);
@@ -68,14 +68,14 @@ exports.npcMovement = async (req, res) => {
                 console.log("Can buy: " + quantity);
 
                 let new_price = await BuySell.buy(actualPrice.price, quantity, company.shares.avariableShares);
-                console.log(new_price);
+                
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
             }else if(canSell && ema < actualPrice.price) { //IF EMA < actual_price -> Price up (Sell??)
                 await User.updateShares("NPC", company.id, Number(currentShares - Number(quantity)));
                 console.log("Can sell: " + quantity);
 
                 let new_price = await BuySell.sell(actualPrice.price, quantity, currentShares);
-                console.log(new_price);
+                
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
                 
             }else if(canBuy) {
