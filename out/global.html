@@ -94,6 +94,79 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="User"><span class="type-signature">(constant) </span>User<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    User controller file, manages calls from the router and interation with database making own logic
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>papiricoh</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -104,7 +177,7 @@
     
 
     
-    <h4 class="name" id="getCheckUser"><span class="type-signature"></span>getCheckUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getCheckUser"><span class="type-signature"></span>getCheckUser<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -112,7 +185,7 @@
 
 
 <div class="description">
-    gets Company data from a id
+    Checks if user is registered and has a wallet in case that not the wallet is created
 </div>
 
 
@@ -154,7 +227,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">Object</span>
 
 
             
@@ -177,7 +250,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">Object</span>
 
 
             
@@ -228,7 +301,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line62">line 62</a>
+        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -253,6 +326,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    in response json format -> user wallet object
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -264,7 +359,189 @@
     
 
     
-    <h4 class="name" id="getCompanyData"><span class="type-signature"></span>getCompanyData<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getCompaniesList"><span class="type-signature"></span>getCompaniesList<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a list of companies in the database
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">req.params -> No input needed</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">controls the response acompany with a status code</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line98">line 98</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    in response json format -> list of companies in a simplified way
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getCompanyData"><span class="type-signature"></span>getCompanyData<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -314,7 +591,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">Object</span>
 
 
             
@@ -337,7 +614,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">Object</span>
 
 
             
@@ -388,7 +665,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line36">line 36</a>
+        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line41">line 41</a>
     </li></ul></dd>
     
 
@@ -413,6 +690,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    in response json format -> company data
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -474,7 +773,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">int</span>
 
 
             
@@ -525,7 +824,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line9">line 9</a>
+        <a href="userController.js.html">userController.js</a>, <a href="userController.js.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -571,13 +870,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getCheckUser">getCheckUser</a></li><li><a href="global.html#getCompanyData">getCompanyData</a></li><li><a href="global.html#updateOwner">updateOwner</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#User">User</a></li><li><a href="global.html#getCheckUser">getCheckUser</a></li><li><a href="global.html#getCompaniesList">getCompaniesList</a></li><li><a href="global.html#getCompanyData">getCompanyData</a></li><li><a href="global.html#updateOwner">updateOwner</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu May 11 2023 11:12:35 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu May 11 2023 12:59:45 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
