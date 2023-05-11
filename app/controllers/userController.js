@@ -32,6 +32,7 @@ async function updateOwner(company_id) {
  * gets Company data from a label of a stock company, calculate history and calculate current and total owned shares in the market
  * @param {*} req req.params -> needs get parameter 'label'
  * @param {*} res controls the response acompany with a status code
+ * @returns in response json format -> company data
  */
 exports.getCompanyData = async (req, res) => {
   try {
@@ -55,9 +56,10 @@ exports.getCompanyData = async (req, res) => {
 };
 
 /**
- * gets Company data from a id
+ * Checks if user is registered and has a wallet in case that not the wallet is created
  * @param {*} req req.params -> needs get parameter 'id'
  * @param {*} res controls the response acompany with a status code
+ * @returns in response json format -> user wallet object
  */
 exports.getCheckUser = async (req, res) => {
   try {
@@ -83,6 +85,12 @@ exports.getCheckUser = async (req, res) => {
   }
 };
 
+/**
+ * Returns a list of companies in the database
+ * @param {*} req req.params -> No input needed
+ * @param {*} res controls the response acompany with a status code
+ * @returns in response json format -> list of companies in a simplified way
+ */
 exports.getCompaniesList = async (req, res) => {
   try {
     const companiesIDs = await User.getAllCompaniesLabels();
