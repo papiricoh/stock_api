@@ -1,6 +1,7 @@
 USE es_extended;
 
 DROP TABLE IF EXISTS stock_history;
+DROP TABLE IF EXISTS stock_status;
 DROP TABLE IF EXISTS stock_shares;
 DROP TABLE IF EXISTS stock_wallet;
 DROP TABLE IF EXISTS stock_companies;
@@ -25,6 +26,14 @@ CREATE TABLE IF NOT EXISTS stock_companies(
 	total_shares INT NOT NULL,
 	UNIQUE (company_label),
 	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS stock_status(
+	id int AUTO_INCREMENT,
+	company_id INT NOT NULL,
+	market_status VARCHAR(10) DEFAULT 'buy', /* buy, sell, hold, bull, bear */
+	PRIMARY KEY (id),
+	FOREIGN KEY (company_id) REFERENCES stock_companies(id)
 );
 
 
@@ -106,3 +115,9 @@ INSERT INTO stock_history (price, company_id, volume, movement_date)
 VALUES (20000, 3, 2000.32, '1980-01-01 00:00:00.1');
 INSERT INTO stock_history (price, company_id, volume, movement_date)
 VALUES (24000, 3, 2000.32, '1984-01-01 00:00:00.1');
+INSERT INTO stock_status (company_id, market_status)
+VALUES (1, 'buy');
+INSERT INTO stock_status (company_id, market_status)
+VALUES (2, 'buy');
+INSERT INTO stock_status (company_id, market_status)
+VALUES (3, 'buy');
