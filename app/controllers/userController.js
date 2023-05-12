@@ -174,6 +174,7 @@ exports.postCreateCompany = async (req, res) => {
           //REMOVE PLAYER MONEY
           await User.updateMoney(body.owner_id, avariable_money - body.initial_money);
         }
+        await User.insertNewStatus(new_company.id);
         res.status(200).json(company);
       }else {
         throw new Error("already owner of company or label repeated");
