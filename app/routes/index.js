@@ -17,8 +17,8 @@ router.post('/user/withdraw', userController.postWithdrawMoney); //player_id, wi
 router.post('/company/group_absorb', userController.postAbsorbCompany); //owner_id, company_label, group_label
 npcController.npcMovement();
 
-cron.schedule('*/5 * * * *', () => {
-    npcController.npcMovement();
+cron.schedule('*/5 * * * *', async () => {
+    await npcController.npcMovement();
 });
 
 module.exports = router;

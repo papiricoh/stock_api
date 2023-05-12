@@ -144,6 +144,16 @@ const User = {
         }
         throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
     },
+    async getPlayerWallet(player) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_wallet WHERE owner_id = ?`, 
+        [player]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Wallet with owner: ' + player + ' -> Not Exists');
+    },
     async getSharesFromId(id, company_id) { //player = id
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_shares WHERE owner_id = ? AND company_id = ?`, 
@@ -154,20 +164,30 @@ const User = {
         }
         throw new Error('Shares of company id: ' + company_id + 'with owner: ' + id + ' -> Not Exists');
     },
+    async getCompanyStatus(company_id) { //player = id
+        const [rows, fields] = await connection.promise().query(
+        `SELECT * FROM stock_status WHERE company_id = ?`, 
+        [company_id]
+        );
+        if (rows.length) {
+            return rows[0];
+        }
+        throw new Error('Status of company id: ' + company_id + ' -> Not Exists');
+    },
     async getCheckUser(id) { //player = id
         const [rows, fields] = await connection.promise().query(
         `SELECT * FROM stock_wallet WHERE owner_id = ?`, 
         [id]
         );
         if (rows.length) {
-            return id;
+            return rows[0];
         }
         throw new Error('User with id: ' + id + ' -> Dont have a stock wallet');
     },
-    async updateMoney(user_id, money) {
+    async updateMoney(user_id, money, total_deposit) {
         const [rows, fields] = await connection.promise().query(
-        `UPDATE stock_wallet SET money = ? WHERE owner_id = ?`, 
-        [money, user_id]
+        `UPDATE stock_wallet SET money = ?, total_deposit = ? WHERE owner_id = ?`, 
+        [money, total_deposit, user_id]
         );
         if (rows.info) {
             return rows;
@@ -183,6 +203,17 @@ const User = {
             return company.label;
         }
         throw new Error('Company with label: ' + company.label + ' -> Allready Exists');
+    },
+    async insertNewStatus(company_id) {
+        const [rows, fields] = await connection.promise().query(
+        `INSERT INTO stock_status (company_id, market_status)
+        VALUES (?, 'buy')`, 
+        [company_id]
+        );
+        if (rows.insertId) {
+            return company_id
+        }
+        throw new Error('Status of company with id: ' + company_id + ' -> Allready Exists');
     },
     async insertNewWallet(id) {
         const [rows, fields] = await connection.promise().query(
@@ -253,6 +284,16 @@ const User = {
             return rows;
         }
         throw new Error('Unable to Update Owner of company_id: ' + company_id);
+    },
+    async updateStatus(company_id, market_status, duration_status) {
+        const [rows, fields] = await connection.promise().query(
+        `UPDATE stock_status SET market_status = ?, duration_status = ? WHERE company_id = ?`, 
+        [market_status, duration_status, company_id]
+        );
+        if (rows.info) {
+            return rows;
+        }
+        throw new Error('Unable to update status of company_id: ' + company_id);
     },
 };
   
