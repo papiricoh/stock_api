@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS stock_status(
 	id int AUTO_INCREMENT,
 	company_id INT NOT NULL,
 	market_status VARCHAR(10) DEFAULT 'buy', /* buy, sell, hold, bull, bear */
+	duration_status INT DEFAULT '0',
 	PRIMARY KEY (id),
 	FOREIGN KEY (company_id) REFERENCES stock_companies(id)
 );
