@@ -88,7 +88,7 @@ exports.npcMovement = async (req, res) => {
                 quantity = quantity - 49;
                 await User.updateShares("NPC", company.id, Number(currentShares - Number(quantity)));
                 console.log("Can sell alternative: " + quantity);
-                let new_price = BuySell.sell(actualPrice.price, quantity, currentShares);
+                let new_price = await BuySell.sell(actualPrice.price, quantity, currentShares);
                 await User.insertNewHistory(company.id, new_price, actualPrice.price * quantity);
             }
         }
