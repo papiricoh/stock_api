@@ -30,7 +30,7 @@ async function getCompanyByLabel(label) {
     return company;
 }
 
-exports.npcMovement = async (req, res) => {
+exports.npcMovement = async () => {
     try {
         const all_companies_labels = await User.getAllCompaniesLabels();
         for (let index = 0; index < all_companies_labels.length; index++) {
