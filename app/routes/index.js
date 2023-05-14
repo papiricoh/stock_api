@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const npcController = require('../controllers/npcController');
+const marketController = require('../controllers/marketController');
 const cron = require('node-cron');
 
 router.get('/users/:id', userController.getCheckUser);
@@ -15,9 +16,10 @@ router.post('/shares/sell', userController.postSellShares); //company_label, pla
 router.post('/user/deposit', userController.postDepositMoney); //player_id, deposit
 router.post('/user/withdraw', userController.postWithdrawMoney); //player_id, withdraw
 router.post('/company/group_absorb', userController.postAbsorbCompany); //owner_id, company_label, group_label
-npcController.npcMovement();
+marketController.marketStatusMovement();
 
 cron.schedule('*/5 * * * *', async () => {
+    await marketController.marketStatusMovement();
     await npcController.npcMovement();
 });
 

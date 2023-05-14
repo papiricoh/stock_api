@@ -296,5 +296,5 @@ const User = {
         throw new Error('Unable to update status of company_id: ' + company_id);
     },
 };
-  
+
 module.exports = User;
